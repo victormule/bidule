@@ -1317,7 +1317,13 @@ body::after{
 <!-- ══ BANDE MONTAGE P5.JS ══ -->
 <div class="assembly-strip" role="img" aria-label="Montage du Bidule — vue éclatée isométrique">
   <canvas id="assembly-canvas"></canvas>
-  <div class="assembly-cap" aria-hidden="true">3.5inch HDMI LCD — <span>Raspberry Pi 4B</span> — UPS HAT E — 4× Li-Ion 4900 mAh</div>
+  <div class="assembly-cap" aria-hidden="true">
+    <span class="assembly-label" data-target="lcd">3.5inch HDMI LCD</span>
+    <span class="assembly-sep"> &nbsp; — &nbsp; </span>
+    <span class="assembly-label" data-target="rpi">Raspberry Pi 4B</span>
+    <span class="assembly-sep"> &nbsp;  — &nbsp; </span>
+    <span class="assembly-label" data-target="ups">UPS HAT E — 4× Li-Ion 4900 mAh</span>
+  </div>
 </div>
 
 <style>
@@ -1331,44 +1337,143 @@ body::after{
   width: 100%;
   height: 100%;
   display: block;
+  cursor: default;
 }
 .assembly-cap {
   position: absolute;
   bottom: 2rem;
   right: var(--pad-x);
   font-family: var(--fm);
-  font-size: .55rem;
+  font-size: .65rem;
   letter-spacing: .2em;
-  color: rgba(8,8,6,.28);
   text-transform: uppercase;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
-.assembly-cap span { color: var(--o); }
+.assembly-sep {
+  color: rgba(8,8,6,.28);
+}
+.assembly-label {
+  color: rgba(0, 0, 0, 0.35);
+  transition: color .25s ease;
+}
+.assembly-label.active {
+  color: var(--o);
+}
 </style>
 
 <script>
 (function() {
-  const canvas  = document.getElementById('assembly-canvas');
-  const ctx     = canvas.getContext('2d');
-  const strip   = canvas.parentElement;
+  const canvas = document.getElementById('assembly-canvas');
+  const ctx    = canvas.getContext('2d');
+  const strip  = canvas.parentElement;
 
-  const LAYERS = [
-    { src: 'images/montage/element6.png', spread:  280 },
-    { src: 'images/montage/element5.png', spread:  180 },
-    { src: 'images/montage/element4.png', spread:   90 },
-    { src: 'images/montage/element3.png', spread:    0 },
-    { src: 'images/montage/element2.png', spread:  -80 },
-    { src: 'images/montage/element1.png', spread: -180 },
+  /* ── Correspondance couche → label ──
+     index 0 = element6 (dessus) … index 5 = element1 (dessous)
+     On ne surveille que les 3 couches interactives.           */
+  const DEFAULT_SRCS = [
+    'images/montage/element6.png',   // 0 — entretoises hautes
+    'images/montage/element5.png',   // 1 — UPS HAT E  ← interactif
+    'images/montage/element4.png',   // 2 — plaque base
+    'images/montage/element3.png',   // 3 — Raspberry Pi 4B  ← interactif
+    'images/montage/element2.png',   // 4 — entretoises basses
+    'images/montage/element1.png',   // 5 — écran LCD  ← interactif
   ];
 
-  let loaded = 0;
-  const imgs = LAYERS.map(l => {
+  /* Pour chaque couche interactive : quelle alt-image et quel label */
+  const INTERACTIVE = {
+    5: { alt: 'images/montage/element1bis.png', target: 'lcd' },
+    3: { alt: 'images/montage/element3bis.png', target: 'rpi' },
+    1: { alt: 'images/montage/element5bis.png', target: 'ups' },
+  };
+
+  const SPREADS = [280, 180, 90, 0, -80, -180];
+
+  /* ── Pré-chargement ── */
+  const imgCache = {};
+  let loadedCount = 0;
+  const allSrcs = [
+    ...DEFAULT_SRCS,
+    ...Object.values(INTERACTIVE).map(v => v.alt),
+  ];
+
+  allSrcs.forEach(src => {
     const img = new Image();
-    img.src = l.src;
-    img.onload = () => { loaded++; render(); };
-    return img;
+    /* Les images sont sur le même domaine — pas de CORS nécessaire.
+       Si le fichier est servi depuis file://, ajouter crossOrigin="anonymous"
+       peut bloquer le chargement ; on l'omet volontairement ici.          */
+    imgCache[src] = img;
+    img.onload = () => { loadedCount++; render(); };
+    img.src = src;
   });
 
+  /* ── Off-screen canvases pour le hit-test pixel-perfect ──
+     Un canvas par couche interactive, redessiné à chaque render. */
+  const hitCanvases = {};
+  Object.keys(INTERACTIVE).forEach(idx => {
+    hitCanvases[idx] = document.createElement('canvas');
+  });
+
+  /* ── État ── */
+  let activeTarget = null;   // 'lcd' | 'rpi' | 'ups' | null
+  let lastScale = 1, lastCx = 0, lastCy = 0;
+  /* positions des couches en pixels canvas : { yOff, iw, ih, x, y } */
+  const layerRects = {};
+
+  /* ── Labels texte ── */
+  const labelEls = {};
+  document.querySelectorAll('.assembly-label').forEach(el => {
+    labelEls[el.dataset.target] = el;
+  });
+
+  function setActive(target) {
+    if (target === activeTarget) return;
+    activeTarget = target;
+    /* Met à jour les labels */
+    Object.entries(labelEls).forEach(([key, el]) => {
+      el.classList.toggle('active', key === target);
+    });
+    canvas.style.cursor = target ? 'pointer' : 'default';
+    render();
+  }
+
+  /* ── Pixel-perfect hit detection ──
+     On utilise les off-screen canvases pour lire l'alpha
+     à la position souris sans perturber le rendu principal. */
+  function hitTest(mx, my) {
+    /* On teste de haut en bas (z-order décroissant) :
+       0 → 5, mais on saute les non-interactifs.
+       En réalité les couches interactives sont 1, 3, 5 ;
+       on les teste dans l'ordre 1, 3, 5 (de haut en bas visuellement). */
+    const order = [5, 3, 1]; // index couches interactives, haute → basse (LCD > Pi > UPS)
+
+    for (const idx of order) {
+      const r = layerRects[idx];
+      if (!r) continue;
+
+      /* Vérifie d'abord la bounding box pour éviter getImageData inutile */
+      if (mx < r.x || mx > r.x + r.iw || my < r.y || my > r.y + r.ih) continue;
+
+      /* Coordonnées dans l'image (espace couche) */
+      const lx = Math.floor(mx - r.x);
+      const ly = Math.floor(my - r.y);
+
+      const hc  = hitCanvases[idx];
+      const hct = hc.getContext('2d');
+      try {
+        const px = hct.getImageData(lx, ly, 1, 1).data;
+        if (px[3] > 10) return INTERACTIVE[idx].target; // alpha > seuil
+      } catch(e) {
+        /* CORS / file:// — on se rabat sur la bounding box */
+        return INTERACTIVE[idx].target;
+      }
+    }
+    return null;
+  }
+
+  /* ── Redimensionnement ── */
   function resize() {
     canvas.width  = strip.clientWidth;
     canvas.height = strip.clientHeight;
@@ -1377,28 +1482,21 @@ body::after{
   window.addEventListener('resize', resize);
   resize();
 
-  /* Progress :
-     - centre de la section == centre du viewport  → p = 1 (assemblé)
-     - section hors écran (haut ou bas)            → p = 0 (éclaté)
-     La transition se fait proportionnellement à la distance au centre. */
+  /* ── Progress scroll ── */
   function getProgress() {
     const rect    = strip.getBoundingClientRect();
     const vh      = window.innerHeight;
-    const sCenter = rect.top + rect.height / 2;  // centre de la section
-    const vCenter = vh / 2;                       // centre du viewport
+    const sCenter = rect.top + rect.height / 2;
+    const vCenter = vh / 2;
     const dist    = Math.abs(sCenter - vCenter);
-    /* max distance utile = demi-écran + demi-section */
     const maxDist = vh / 2 + rect.height / 2;
     return Math.max(0, 1 - dist / maxDist);
   }
+  function smoothstep(t) { return t * t * (3 - 2 * t); }
 
-  /* Smoothstep */
-  function smoothstep(t) {
-    return t * t * (3 - 2 * t);
-  }
-
+  /* ── Render ── */
   function render() {
-    if (loaded === 0) return;
+    if (loadedCount === 0) return;
     const W = canvas.width;
     const H = canvas.height;
     ctx.clearRect(0, 0, W, H);
@@ -1407,17 +1505,66 @@ body::after{
     const scale = Math.min(W / 1000, H / 700) * 0.80;
     const cx    = W * 0.5;
     const cy    = H * 0.48;
+    lastScale = scale; lastCx = cx; lastCy = cy;
 
-    LAYERS.forEach((l, i) => {
-      const img = imgs[i];
-      if (!img.complete || !img.naturalWidth) return;
-      const yOff = l.spread * (1 - p);
+    DEFAULT_SRCS.forEach((defSrc, i) => {
+      /* Choisit la bonne source */
+      let src = defSrc;
+      if (activeTarget && INTERACTIVE[i] && INTERACTIVE[i].target === activeTarget) {
+        src = INTERACTIVE[i].alt;
+      }
+      const img = imgCache[src];
+      if (!img || !img.complete || !img.naturalWidth) return;
+
+      const yOff = SPREADS[i] * (1 - p);
       const iw   = img.naturalWidth  * scale;
       const ih   = img.naturalHeight * scale;
-      ctx.drawImage(img, cx - iw/2, cy - ih/2 + yOff, iw, ih);
+      const x    = cx - iw / 2;
+      const y    = cy - ih / 2 + yOff;
+
+      /* Mémorise le rect pour le hit-test */
+      if (INTERACTIVE[i]) {
+        layerRects[i] = { x, y, iw, ih, yOff };
+
+        /* Redessine le off-screen canvas avec l'image par défaut
+           (on veut tester la forme, indépendamment de la couleur) */
+        const hc  = hitCanvases[i];
+        hc.width  = Math.ceil(iw);
+        hc.height = Math.ceil(ih);
+        const hct = hc.getContext('2d');
+        hct.clearRect(0, 0, hc.width, hc.height);
+        const defImg = imgCache[defSrc];
+        if (defImg && defImg.complete && defImg.naturalWidth) {
+          hct.drawImage(defImg, 0, 0, iw, ih);
+        }
+      }
+
+      ctx.drawImage(img, x, y, iw, ih);
     });
   }
 
+  /* ── Mouse move sur le canvas ── */
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    /* Conversion CSS pixels → canvas pixels */
+    const scaleX = canvas.width  / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top)  * scaleY;
+
+    setActive(hitTest(mx, my));
+  });
+
+  canvas.addEventListener('mouseleave', () => setActive(null));
+
+  /* Les labels texte peuvent aussi activer (optionnel — conservé pour accessibilité) */
+  document.querySelectorAll('.assembly-label').forEach(el => {
+    el.style.pointerEvents = 'all';
+    el.addEventListener('mouseenter', () => setActive(el.dataset.target));
+    el.addEventListener('mouseleave', () => setActive(null));
+  });
+
+  /* ── Scroll ── */
   let rafId = null;
   window.addEventListener('scroll', () => {
     if (rafId) return;
