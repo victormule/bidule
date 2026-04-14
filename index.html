@@ -1306,9 +1306,9 @@ body::after{
     <h2 class="philo-t reveal d1">Technologie<br><em>décoloniale ?</em></h2>
     <div class="reveal d2">
       <p class="philo-p">Il y a quelque chose de paradoxal à utiliser le numérique pour rendre justice à des peuples que la modernité occidentale a tenté, sinon d'effacer, du moins d'aliéner.</p>
-      <p class="philo-p">Bidule n'est pas la start-up nation. Il ne vient pas avec un écran géant ni des serveurs en Californie. Il ne produit ni croissance économique ni plein emploi. Le cœur de l'appareil fait la taille d'une carte de crédit. L'entièreté du système tient sur une carte SD. La technologie est réduite à son strict nécessaire, sans superflu.</p>
+            <p class="philo-p">Bidule n'est pas la start-up nation. Il ne vient pas avec un écran géant ni des serveurs en Californie. Il ne produit ni croissance économique ni plein emploi. Le cœur de l'appareil fait la taille d'une carte de crédit. L'entièreté du système est contenu sur une micro-SD. La technologie est réduite à son strict nécessaire, sans superflu.</p>
       <p class="philo-p">C'est un projet libre et open source, pensé pour une maintenance simple. Chaque partie est démontable et remplaçable à moindre coût. Tout peut être reprogrammé, réadapté selon les besoins.</p>
-      <p class="philo-p">Internet est une infrastructure inégalement distribuée. Les régions amazoniennes les plus reculées, là où vivent les communautés les moins assimilées, sont aussi les moins connectées. Si certaines communautés autochtones se sont approprié des technologies comme le smartphone ou l'ordinateur, en partie comme moyen de lutte et de reconnaissance, elles restent dépendantes des réseaux.</p>
+      <p class="philo-p">Internet est une infrastructure inégalement distribuée. Les régions amazoniennes les plus reculées, là où vivent les communautés les moins assimilées, sont aussi les moins connectées. Si certaines communautés autochtones se sont approprié des technologies comme le smartphone ou l'ordinateur, en partie comme moyen de lutte et de reconnaissance, elles restent dépendantes économiquement des réseaux.</p>
     </div>
     <span class="pill reveal d3">Projet free open source · Téléchargement bientôt disponible</span>
   </div>
@@ -1392,7 +1392,7 @@ body::after{
     return Math.max(0, 1 - dist / maxDist);
   }
 
-  /* Smoothstep : transition douce, ni trop rapide ni trop lente */
+  /* Smoothstep */
   function smoothstep(t) {
     return t * t * (3 - 2 * t);
   }
@@ -1576,25 +1576,25 @@ body::after{
 <!-- ══ BASE DE DONNÉES ══ -->
 <section id="bdd" aria-label="Base de données en ligne">
   <div style="max-width:1360px;margin:0 auto">
-    <div class="label reveal">08 — La base de données</div>
+    <div class="label reveal">Accès en ligne</div>
     <div class="bdd-grid">
       <div class="bdd-screens reveal">
         <div class="bdd-screen">
           <img src="images/screen-galerie.webp"
                alt="Interface Amazonie(s) — galerie d'artefacts avec panneau de commentaires texte, audio et image"
                loading="lazy" width="900" height="500">
-          <div class="bdd-screen-label">Interface — galerie + commentaires texte, audio, image</div>
+          <div class="bdd-screen-label">Interface — zone de commentaires texte, audio, image</div>
         </div>
         <div class="bdd-screen">
           <img src="images/screen-carte.webp"
                alt="Interface Amazonie(s) — carte satellite de localisation des origines des artefacts"
                loading="lazy" width="900" height="500">
-          <div class="bdd-screen-label">Carte satellite — localisation des origines</div>
+          <div class="bdd-screen-label">Carte satellite — localisation avec marquage et signature</div>
         </div>
       </div>
 
       <div class="bdd-content">
-        <div class="label reveal">Accès en ligne</div>
+        <div class="label reveal">08 — La base de données</div>
         <h2 class="bdd-title reveal d1">
           Aperçu de la<br><em>base de données</em>
         </h2>
@@ -1602,7 +1602,7 @@ body::after{
           L'application tourne en local sur Bidule, mais une version en ligne est accessible depuis n'importe quel navigateur.
         </p>
         <p class="body reveal d3" style="margin-top:1.2rem">
-          Elle permet de se faire une idée concrète du dispositif — de son interface, de ses fonctionnalités — avant tout déploiement terrain.
+          Elle permet de se faire une idée concrète du dispositif — de son interface, de ses fonctionnalités — pour mieux comprendre son déploiement sur le terrain.
         </p>
         <a class="bdd-cta reveal d3" href="https://amazonies.netlify.app/" target="_blank" rel="noopener">
           Accéder à la base de données
