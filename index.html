@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bidule — Amazonie(s)</title>
+<meta name="description" content="Bidule est une borne Wi-Fi autonome, nomade et hors-ligne, conçue pour restituer la parole et le regard aux peuples autochtones dépossédés de leurs artefacts culturels.">
+<meta property="og:title" content="Bidule — Amazonie(s)">
+<meta property="og:description" content="Base de données sauvage, nomade et autonome. Un espace conçu pour restituer regard et parole aux peuples autochtones dépossédés de leurs artefacts culturels.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#080806">
+<link rel="canonical" href="https://amazonies.netlify.app/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   RESET & ROOT
+══════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --n:   #080806;
+  --n2:  #111110;
+  --n3:  #1c1c1a;
+  --b:   #f0ece3;
+  --b2:  #e8e3d8;
+  --v:   #1d5c3a;
+  --vd:  #0e3320;
+  --vl:  #d4e8d9;
+  --o:   #b8600e;
+  --ol:  #e8c89a;
+  --g:   #6b6b5e;
+  --lh:  1.85;
+  --ff:  'Cormorant Garamond', 'Georgia', serif;
+  --fm:  'DM Mono', monospace;
+  --fd:  'Fraunces', serif;
+  --nav-h: 3rem;
+  --pad-x: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+html{scroll-behavior:smooth;font-size:16px;scroll-padding-top:calc(var(--nav-h) + .5rem)}
+body{
+  background:var(--n);color:var(--b);
+  font-family:var(--ff);
+  overflow-x:hidden;
+  cursor:default;
+}
+::selection{background:var(--o);color:var(--n)}
+
+/* grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.45;mix-blend-mode:overlay;
+}
+
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--n)}
+::-webkit-scrollbar-thumb{background:var(--o)}
+
+/* ══ FOCUS VISIBLE ══ */
+:focus-visible{
+  outline:2px solid var(--o);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+/* ══════════════════════════════════════════
+   UTILITAIRES
+══════════════════════════════════════════ */
+.label{
+  font-family:var(--fm);font-size:.6rem;letter-spacing:.35em;
+  color:var(--o);text-transform:uppercase;
+  display:flex;align-items:center;gap:.8rem;
+}
+.label::before{content:'';width:2rem;height:1px;background:var(--o);opacity:.6;flex-shrink:0}
+
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.reveal.on{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.22s}.d3{transition-delay:.34s}.d4{transition-delay:.46s}
+
+.body{font-size:1.05rem;line-height:var(--lh);color:rgba(240,236,227,.65)}
+.body+.body{margin-top:1.4rem}
+
+/* ══════════════════════════════════════════
+   NAVIGATION — toujours visible, améliorée
+══════════════════════════════════════════ */
+#sitenav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:8000;
+  height:var(--nav-h);
+  background:rgba(8,8,6,.0);
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+  border-bottom:1px solid transparent;
+  transition:background .5s ease, backdrop-filter .5s ease, border-color .5s ease;
+  display:flex;align-items:stretch;
+  padding:0 var(--pad-x);
+  gap:0;
+}
+#sitenav.scrolled{
+  background:rgba(8,8,6,.82);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom-color:rgba(240,236,227,.06);
+}
+
+/* logo côté gauche dans la nav */
+.nav-brand{
+  display:flex;align-items:center;
+  font-family:var(--fd);font-size:.95rem;font-weight:700;
+  color:var(--b);letter-spacing:.02em;
+  text-decoration:none;
+  margin-right:auto;
+  opacity:0;transform:translateX(-8px);
+  transition:opacity .4s,transform .4s, color .3s;
+  white-space:nowrap;
+}
+#sitenav.scrolled .nav-brand{opacity:1;transform:translateX(0)}
+.nav-brand em{font-style:italic;color:var(--o)}
+.nav-brand:hover{color:var(--ol)}
+
+.nav-links{
+  display:flex;align-items:stretch;gap:0;
+  list-style:none;
+}
+
+.nav-item{
+  display:flex;align-items:center;
+  padding:0 .9rem;
+  text-decoration:none;
+  position:relative;
+  transition:background .2s;
+}
+.nav-item::after{
+  content:'';
+  position:absolute;bottom:0;left:.9rem;right:.9rem;
+  height:1px;background:var(--o);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .35s cubic-bezier(.16,1,.3,1);
+}
+.nav-item.active::after,.nav-item:hover::after{transform:scaleX(1)}
+
+.nav-item span{
+  font-family:var(--fm);font-size:.5rem;letter-spacing:.2em;
+  color:rgba(240,236,227,.35);text-transform:uppercase;
+  white-space:nowrap;
+  transition:color .25s;
+}
+.nav-item:hover span{color:rgba(240,236,227,.7)}
+.nav-item.active span{color:var(--o)}
+
+
+
+/* ── Burger mobile ── */
+.nav-burger{
+  display:none;
+  flex-direction:column;justify-content:center;gap:5px;
+  width:2.2rem;height:var(--nav-h);
+  cursor:pointer;background:none;border:none;
+  padding:0;margin-left:auto;
+  position:relative;z-index:1;
+}
+.nav-burger span{
+  display:block;width:100%;height:1px;
+  background:var(--b);
+  transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .25s;
+  transform-origin:center;
+}
+.nav-burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* ── Menu mobile overlay ── */
+#mobile-menu{
+  position:fixed;inset:0;z-index:7900;
+  background:var(--n);
+  display:grid;grid-template-rows:auto 1fr auto;
+  padding:0;
+  clip-path:inset(0 0 100% 0);
+  transition:clip-path .55s cubic-bezier(.77,0,.18,1);
+  pointer-events:none;
+}
+#mobile-menu.open{clip-path:inset(0 0 0% 0)}
+
+/* barre du haut dans le menu — miroir de la nav */
+.mobile-menu-top{
+  height:var(--nav-h);
+  display:flex;align-items:center;
+  padding:0 var(--pad-x);
+  border-bottom:1px solid rgba(240,236,227,.06);
+}
+.mobile-menu-brand{
+  font-family:var(--fd);font-size:.95rem;font-weight:700;
+  color:var(--b);text-decoration:none;letter-spacing:.02em;
+}
+.mobile-menu-brand em{font-style:italic;color:var(--o)}
+
+/* liste des liens */
+.mobile-nav-list{
+  list-style:none;
+  display:flex;flex-direction:column;
+  justify-content:center;
+  /* padding vertical adaptatif pour tenir dans l'écran */
+  padding:clamp(.8rem,3vh,2.5rem) var(--pad-x);
+  gap:0;
+  overflow:hidden;
+  height:100%;
+}
+.mobile-nav-item{
+  border-bottom:1px solid rgba(240,236,227,.06);
+  transform:translateY(30px);opacity:0;
+  transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .5s;
+  flex:1;display:flex;align-items:center;
+}
+.mobile-nav-item:first-child{border-top:1px solid rgba(240,236,227,.06)}
+#mobile-menu.open .mobile-nav-item{transform:none;opacity:1}
+/* stagger */
+#mobile-menu.open .mobile-nav-item:nth-child(1){transition-delay:.06s}
+#mobile-menu.open .mobile-nav-item:nth-child(2){transition-delay:.10s}
+#mobile-menu.open .mobile-nav-item:nth-child(3){transition-delay:.14s}
+#mobile-menu.open .mobile-nav-item:nth-child(4){transition-delay:.18s}
+#mobile-menu.open .mobile-nav-item:nth-child(5){transition-delay:.22s}
+#mobile-menu.open .mobile-nav-item:nth-child(6){transition-delay:.26s}
+#mobile-menu.open .mobile-nav-item:nth-child(7){transition-delay:.30s}
+#mobile-menu.open .mobile-nav-item:nth-child(8){transition-delay:.34s}
+
+.mobile-nav-item a{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;
+  width:100%;
+  padding:.5rem 0;
+  text-decoration:none;
+  /* tous les mots : même couleur claire */
+  color:rgba(240,236,227,.7);
+  transition:color .22s;
+}
+.mobile-nav-item a:hover,
+.mobile-nav-item a:active{color:var(--o)}
+
+.mobile-nav-num{
+  font-family:var(--fm);font-size:.48rem;letter-spacing:.2em;
+  /* même couleur que le reste, discret */
+  color:rgba(240,236,227,.3);
+  flex-shrink:0;
+  transition:color .22s;
+}
+.mobile-nav-item a:hover .mobile-nav-num,
+.mobile-nav-item a:active .mobile-nav-num{color:rgba(184,96,14,.6)}
+
+.mobile-nav-label{
+  font-family:var(--fd);
+  /* taille fluide qui rétrécit si la fenêtre est petite */
+  font-size:clamp(1.2rem,4.5vw,2.2rem);
+  font-weight:700;line-height:1;flex:1;
+  /* couleur uniforme — em héritera de la couleur du parent */
+  color:inherit;
+}
+.mobile-nav-label em{
+  font-style:italic;
+  color:inherit; /* même couleur que le reste du titre */
+  transition:color .22s;
+}
+
+.mobile-nav-arrow{
+  font-size:.75rem;
+  color:rgba(240,236,227,.2);
+  transition:color .22s, transform .22s;
+  flex-shrink:0;
+}
+.mobile-nav-item a:hover .mobile-nav-arrow,
+.mobile-nav-item a:active .mobile-nav-arrow{
+  color:var(--o);
+  transform:translate(3px,-2px);
+}
+
+/* footer bas du menu */
+.mobile-menu-bottom{
+  padding:2rem var(--pad-x);
+  border-top:1px solid rgba(240,236,227,.06);
+  display:flex;align-items:center;justify-content:space-between;
+  transform:translateY(20px);opacity:0;
+  transition:transform .5s .42s, opacity .5s .42s;
+}
+#mobile-menu.open .mobile-menu-bottom{transform:none;opacity:1}
+.mobile-footer{
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.2em;
+  color:rgba(240,236,227,.18);text-transform:uppercase;
+}
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+#hero{
+  height:100svh;min-height:600px;
+  display:grid;grid-template-rows:1fr auto;
+  padding:calc(var(--nav-h) + 2rem) var(--pad-x) 4rem;
+  position:relative;overflow:hidden;
+  background:var(--n);
+}
+
+.hero-deco{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 70% at 75% 15%, rgba(29,92,58,.16) 0%,transparent 65%),
+    radial-gradient(ellipse 35% 50% at 15% 85%, rgba(184,96,14,.08) 0%,transparent 60%);
+}
+
+.hero-rule{
+  position:absolute;left:var(--pad-x);top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,var(--o) 25%,var(--o) 75%,transparent);
+  opacity:.12;
+}
+
+.hero-top{
+  padding-left:1.8rem;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding-bottom:2rem;
+}
+
+.hero-eyebrow{
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.4em;
+  color:var(--o);text-transform:uppercase;
+  margin-bottom:2.5rem;
+  opacity:0;animation:fup 1s .3s both;
+}
+
+.hero-h{
+  font-family:var(--fd);
+  font-size:clamp(4rem,11vw,12.5rem);
+  font-weight:800;line-height:.86;letter-spacing:-.02em;
+  color:var(--b);
+  opacity:0;animation:fup 1.2s .5s both;
+}
+.hero-h em{font-style:italic;color:var(--o)}
+.hero-h .sub{
+  display:block;
+  font-size:clamp(2rem,5.5vw,6rem);
+  font-weight:300;letter-spacing:-.01em;
+  color:rgba(240,236,227,.45);
+  margin-top:.4rem;
+}
+
+.hero-bottom{
+  padding-left:1.8rem;
+  display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end;
+}
+
+.hero-desc{
+  max-width:42ch;font-size:1.05rem;line-height:1.8;
+  color:rgba(240,236,227,.55);
+  opacity:0;animation:fup 1s .9s both;
+}
+
+.hero-scroll{
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.35em;
+  color:rgba(240,236,227,.22);text-transform:uppercase;
+ 
+  animation:pulse 3s ease-in-out infinite;
+  padding-bottom:.5rem;
+  user-select:none;
+}
+
+/* image hero — plus visible */
+.hero-img-strip{
+  position:absolute;right:0;top:0;width:40%;height:100%;
+  overflow:hidden;
+}
+.hero-img-strip img{
+  width:100%;height:100%;object-fit:cover;object-position:center 30%;
+  filter:saturate(.6) contrast(1.05) brightness(.85);
+  mix-blend-mode:luminosity;
+  opacity:.72;
+}
+.hero-img-strip::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to right,var(--n) 0%,rgba(8,8,6,.3) 35%,transparent 65%,var(--n) 100%);
+}
+
+/* indicateur de scroll animé */
+.hero-scroll-line{
+  position:absolute;bottom:3rem;left:calc(var(--pad-x) + 1.8rem - .5px);
+  width:1px;height:3.5rem;
+  background:linear-gradient(to bottom, var(--o), transparent);
+  opacity:0;animation:fup 1s 1.4s both;
+}
+.hero-scroll-line::after{
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:40%;background:var(--o);
+  animation:scrollDown 2.2s ease-in-out infinite 1.6s;
+}
+@keyframes scrollDown{
+  0%{transform:translateY(0);opacity:1}
+  100%{transform:translateY(250%);opacity:0}
+}
+
+/* ══════════════════════════════════════════
+   MANIFESTE
+══════════════════════════════════════════ */
+#manifeste{
+  background:var(--vd);
+  padding:5rem var(--pad-x);
+  position:relative;overflow:hidden;
+}
+#manifeste::before,#manifeste::after{
+  content:'';position:absolute;left:0;right:0;height:1px;
+  background:var(--o);opacity:.25;
+}
+#manifeste::before{top:0}#manifeste::after{bottom:0}
+
+/* Décoration géométrique — lignes diagonales en SVG background */
+.mani-deco{
+  position:absolute;right:0;top:0;bottom:0;
+  width:clamp(200px,40%,520px);
+  pointer-events:none;user-select:none;
+  opacity:.07;
+  background-image:
+    repeating-linear-gradient(
+      -52deg,
+      var(--o) 0px,
+      var(--o) 1px,
+      transparent 1px,
+      transparent 28px
+    );
+  /* masque pour ne pas empiéter à gauche */
+  -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,.7) 0%, transparent 100%);
+  mask-image:linear-gradient(to left, rgba(0,0,0,.7) 0%, transparent 100%);
+}
+/* petit carré ocre — ancre géométrique */
+.mani-deco::after{
+  content:'';
+  position:absolute;
+  right:clamp(2rem,6vw,5rem);
+  top:50%;transform:translateY(-50%);
+  width:clamp(2.5rem,5vw,4rem);
+  height:clamp(2.5rem,5vw,4rem);
+  border:1px solid rgba(184,96,14,.35);
+  opacity:1;
+}
+
+.mani-label{margin-bottom:2rem}
+
+/* Le conteneur a une hauteur fixée par le texte fantôme invisible */
+.mani-text-wrap{
+  position:relative;
+  max-width:58rem;
+}
+.mani-ghost{
+  font-family:var(--fd);
+  font-size:clamp(1.25rem,2.5vw,2rem);
+  font-style:italic;line-height:1.65;
+  color:transparent;
+  user-select:none;pointer-events:none;
+  visibility:hidden;
+}
+.mani-text{
+  position:absolute;
+  top:0;left:0;right:0;
+  font-family:var(--fd);
+  font-size:clamp(1.25rem,2.5vw,2rem);
+  font-style:italic;line-height:1.65;
+  color:var(--b);
+  /* pas d'overflow:hidden — le texte ne passe pas sous un dégradé */
+}
+/* Le dégradé est supprimé — plus rien ne couvre le texte */
+
+.cursor-blink{
+  display:inline-block;width:2px;height:.95em;
+  background:var(--o);vertical-align:-.1em;margin-left:2px;
+  animation:blink .9s step-end infinite;
+}
+
+/* ══════════════════════════════════════════
+   PROJET ESAA
+══════════════════════════════════════════ */
+#projet{
+  background:var(--b);color:var(--n);
+  display:grid;grid-template-columns:1fr 1fr;min-height:85vh;
+}
+
+.projet-img{
+  overflow:hidden;position:relative;
+}
+.projet-img img{
+  width:100%;height:100%;object-fit:cover;object-position:center 20%;
+  display:block;
+  filter:sepia(.1) contrast(1.05);
+  transition:transform 1.2s ease;
+}
+.projet-img:hover img{transform:scale(1.04)}
+.projet-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to right,transparent 55%,var(--b));
+}
+
+.projet-body{
+  padding:6rem clamp(2.5rem,5vw,5rem) 6rem clamp(2rem,4vw,4rem);
+  display:flex;flex-direction:column;justify-content:center;
+}
+
+.projet-title{
+  font-family:var(--fd);
+  font-size:clamp(2rem,3.8vw,3.8rem);
+  font-weight:700;line-height:1.1;
+  margin:1.5rem 0 2rem;color:var(--n);
+}
+.projet-title em{font-style:italic;color:var(--v)}
+
+.projet-text{
+  font-size:1.05rem;line-height:1.85;color:rgba(14,14,8,.62);
+  max-width:50ch;
+}
+.projet-text+.projet-text{margin-top:1.3rem}
+
+.projet-link{
+  display:inline-flex;align-items:center;gap:.7rem;
+  margin-top:2.5rem;
+  font-family:var(--fm);font-size:.65rem;letter-spacing:.25em;
+  color:var(--v);text-decoration:none;text-transform:uppercase;
+  padding-bottom:.4rem;border-bottom:1px solid currentColor;
+  transition:opacity .3s;
+  width:fit-content;
+}
+.projet-link:hover{opacity:.55}
+.projet-link::after{content:'↗';font-size:.8rem}
+.projet-label{color:var(--v)}
+.projet-label::before{background:var(--v)}
+
+/* ══════════════════════════════════════════
+   INTRO OBJET
+══════════════════════════════════════════ */
+#intro{
+  padding:8rem var(--pad-x);
+  background:var(--n);
+}
+.intro-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center;
+  max-width:1400px;margin:0 auto;
+}
+
+.intro-text .big{
+  font-family:var(--fd);
+  font-size:clamp(2.2rem,4.5vw,4.5rem);
+  font-weight:700;line-height:1.05;
+  margin:1.5rem 0 2.5rem;color:var(--b);
+}
+.intro-text .big em{font-style:italic;color:var(--o)}
+
+.intro-photo{
+  position:relative;aspect-ratio:3/4;overflow:hidden;
+}
+.intro-photo img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(.65) contrast(1.08);
+  transition:filter 1s ease,transform 1s ease;
+}
+.intro-photo:hover img{filter:saturate(1) contrast(1.05);transform:scale(1.03)}
+.intro-photo::before{
+  content:'';position:absolute;inset:0;
+  border:1px solid rgba(184,96,14,.2);z-index:1;pointer-events:none;
+}
+.intro-photo-cap{
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.2em;
+  color:rgba(240,236,227,.3);text-transform:uppercase;
+  margin-top:1rem;line-height:1.6;
+}
+
+/* ══════════════════════════════════════════
+   PHOTO BANDE PLEINE LARGEUR
+══════════════════════════════════════════ */
+.full-strip{
+  width:100%;height:clamp(240px,55vh,520px);overflow:hidden;position:relative;
+}
+.full-strip img{
+  width:100%;height:100%;object-fit:cover;object-position:50% 40%;
+  filter:saturate(.55) brightness(.72) contrast(1.1);
+  transition:filter 1.5s ease;
+}
+.full-strip:hover img{filter:saturate(.8) brightness(.85) contrast(1.05)}
+.full-strip-cap{
+  position:absolute;bottom:2rem;right:var(--pad-x);
+  font-family:var(--fm);font-size:.55rem;letter-spacing:.2em;
+  color:rgba(240,236,227,.4);text-transform:uppercase;
+}
+.full-strip-cap span{color:var(--o)}
+
+/* ══════════════════════════════════════════
+   ENJEUX
+══════════════════════════════════════════ */
+#enjeux{
+  background:var(--b2);color:var(--n);
+  padding:8rem var(--pad-x);
+}
+.enjeux-inner{max-width:1360px;margin:0 auto}
+
+.enjeux-head{
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;
+  align-items:end;margin-bottom:5rem;
+}
+.enjeux-head .big{
+  font-family:var(--fd);
+  font-size:clamp(2.2rem,4.5vw,4.2rem);
+  font-weight:700;line-height:1.05;color:var(--n);
+}
+.enjeux-head .big em{font-style:italic;color:var(--v)}
+.enjeux-head .intro-e{
+  font-size:1rem;line-height:1.85;color:rgba(14,14,8,.58);
+}
+.enjeux-label{color:var(--v)}
+.enjeux-label::before{background:var(--v)}
+
+.enjeux-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid rgba(14,14,8,.1);
+}
+.enjeu{
+  padding:3rem 2.5rem;
+  border-right:1px solid rgba(14,14,8,.08);
+  position:relative;overflow:hidden;
+  transition:background .4s ease;
+}
+.enjeu:nth-child(3n){border-right:none}
+.enjeu:nth-child(n+4){border-top:1px solid rgba(14,14,8,.08)}
+.enjeu:hover{background:rgba(29,92,58,.05)}
+
+.enjeu-n{
+  font-family:var(--fd);font-weight:900;
+  font-size:5rem;line-height:1;
+  color:rgba(29,92,58,.07);margin-bottom:1.2rem;
+  transition:color .4s;user-select:none;
+}
+.enjeu:hover .enjeu-n{color:rgba(29,92,58,.15)}
+.enjeu-t{
+  font-family:var(--fd);font-size:1.25rem;font-weight:600;
+  color:var(--vd);margin-bottom:.9rem;line-height:1.2;
+}
+.enjeu-p{font-size:.92rem;line-height:1.8;color:rgba(14,14,8,.58)}
+.enjeu::after{
+  content:'';position:absolute;left:0;bottom:0;
+  width:0;height:2px;background:var(--o);
+  transition:width .5s cubic-bezier(.16,1,.3,1);
+}
+.enjeu:hover::after{width:100%}
+
+/* ══════════════════════════════════════════
+   PHILOSOPHIE
+══════════════════════════════════════════ */
+#philo{
+  min-height:90vh;display:flex;align-items:center;justify-content:center;
+  padding:8rem var(--pad-x);
+  position:relative;overflow:hidden;
+  background:var(--vd);
+}
+#philo::before{
+  content:'';position:absolute;inset:0;
+  background:url('images/foret.webp') center center / cover no-repeat;
+  opacity:.2;
+  filter:saturate(.4) brightness(.55);
+}
+#philo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(14,51,32,.0) 0%,rgba(14,51,32,.15) 50%,rgba(14,51,32,.9) 100%);
+  pointer-events:none;
+}
+.philo-inner{max-width:52rem;text-align:center;position:relative;z-index:1}
+
+.philo-t{
+  font-family:var(--fd);
+  font-size:clamp(2rem,4.5vw,3.8rem);
+  font-weight:700;line-height:1.15;
+  margin:1.5rem 0 2.5rem;color:var(--b);
+}
+.philo-t em{font-style:italic;color:var(--ol)}
+.philo-p{font-size:1.05rem;line-height:1.9;color:rgba(240,236,227,.62)}
+.philo-p+.philo-p{margin-top:1.3rem}
+.philo-label{justify-content:center;color:rgba(240,236,227,.32)}
+.philo-label::before{background:rgba(240,236,227,.2)}
+
+.pill{
+  display:inline-block;margin-top:3rem;
+  padding:.65rem 1.8rem;
+  border:1px solid rgba(184,96,14,.35);
+  font-family:var(--fm);font-size:.58rem;letter-spacing:.35em;
+  color:var(--ol);text-transform:uppercase;
+  transition:border-color .3s, color .3s;
+}
+.pill:hover{border-color:var(--o);color:var(--b)}
+
+/* ══════════════════════════════════════════
+   FONCTIONNALITÉS
+══════════════════════════════════════════ */
+#fonctions{background:var(--n2);padding:8rem var(--pad-x)}
+.fonctions-inner{max-width:1360px;margin:0 auto}
+
+.fonctions-head{
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:end;
+  margin-bottom:5rem;
+}
+.fonctions-head .big{
+  font-family:var(--fd);
+  font-size:clamp(2.2rem,4.5vw,4.2rem);font-weight:700;line-height:1.05;
+}
+.fonctions-head .big em{font-style:italic;color:var(--o)}
+
+.fn-grid{display:grid;grid-template-columns:1fr 1fr}
+.fn{
+  padding:2.8rem 3rem;
+  border:1px solid rgba(240,236,227,.05);
+  margin:-1px 0 0 -1px;
+  position:relative;overflow:hidden;
+  transition:background .4s;
+}
+.fn:hover{background:rgba(29,92,58,.07)}
+.fn::after{
+  content:'';position:absolute;left:0;bottom:0;
+  width:0;height:1.5px;background:var(--o);
+  transition:width .6s cubic-bezier(.16,1,.3,1);
+}
+.fn:hover::after{width:100%}
+.fn-ico{font-size:1.5rem;margin-bottom:1.3rem;display:block}
+.fn-t{font-family:var(--fd);font-size:1.15rem;font-weight:600;margin-bottom:.7rem;color:var(--b)}
+.fn-p{font-size:.9rem;line-height:1.8;color:rgba(240,236,227,.42)}
+
+/* ══════════════════════════════════════════
+   CHIFFRES
+══════════════════════════════════════════ */
+#metrics{
+  background:var(--n);
+  padding:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto 1fr;
+  min-height:70vh;
+}
+.metrics-header{
+  grid-column:1/-1;
+  padding:3.5rem var(--pad-x) 2.5rem;
+  border-bottom:1px solid rgba(240,236,227,.04);
+}
+.metrics-img-col{
+  position:relative;overflow:hidden;
+}
+.metrics-img-col img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;object-position:center 25%;
+  filter:saturate(.55) contrast(1.1) brightness(.8);
+  transition:filter 1.4s ease,transform 1.4s ease;
+}
+.metrics-img-col:hover img{
+  filter:saturate(.8) brightness(.9);transform:scale(1.04);
+}
+.metrics-img-col::after{
+  content:'';position:absolute;
+  top:4rem;right:0;bottom:4rem;
+  width:1px;background:var(--o);opacity:.25;
+}
+.metrics-nums-col{
+  display:grid;
+  grid-template-rows:repeat(3,1fr);
+  grid-template-columns:1fr 1fr;
+}
+.metric{
+  padding:2.5rem 3rem;
+  border-bottom:1px solid rgba(240,236,227,.05);
+  border-right:1px solid rgba(240,236,227,.05);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  transition:background .4s;
+}
+.metric:hover{background:rgba(184,96,14,.04)}
+.metric:nth-child(2n){border-right:none}
+.metric:nth-child(5),.metric:nth-child(6){border-bottom:none}
+.metric::before{
+  content:'';position:absolute;
+  bottom:0;left:3rem;right:3rem;
+  height:1px;background:var(--o);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.metric:hover::before{transform:scaleX(1)}
+.metric-val{
+  font-family:var(--fd);
+  font-size:clamp(2.4rem,4vw,5rem);
+  font-weight:900;line-height:1;
+  color:var(--b);margin-bottom:.55rem;letter-spacing:-.02em;
+}
+.metric-val span{color:var(--o)}
+.metric-label{
+  font-family:var(--fm);font-size:.58rem;
+  letter-spacing:.22em;
+  /* contraste amélioré : de .28 à .5 */
+  color:rgba(240,236,227,.5);
+  text-transform:uppercase;line-height:1.5;
+}
+
+/* ══════════════════════════════════════════
+   ARCHITECTURE
+══════════════════════════════════════════ */
+#arch{background:#050504;padding:8rem var(--pad-x)}
+.arch-inner{max-width:1360px;margin:0 auto}
+
+.arch-grid{
+  display:grid;grid-template-columns:1fr 1.6fr;gap:7rem;
+  align-items:start;margin-top:3.5rem;
+}
+.specs-t{
+  font-family:var(--fm);font-size:.68rem;
+  letter-spacing:.15em;color:var(--g);
+  text-transform:uppercase;margin-bottom:1rem;
+}
+.specs-row{
+  display:grid;grid-template-columns:1.1fr 1.6fr;
+  padding:.75rem 0;
+  border-bottom:1px solid rgba(240,236,227,.05);
+  gap:1rem;align-items:baseline;
+}
+.specs-row:last-child{border:none}
+.sk{font-family:var(--fm);font-size:.7rem;color:var(--g);letter-spacing:.04em}
+.sv{font-family:var(--fm);font-size:.75rem;color:var(--ol)}
+
+.schema{
+  border:1px solid rgba(29,92,58,.28);
+  padding:2.5rem;
+  font-family:var(--fm);font-size:.7rem;line-height:2.1;
+  background:rgba(29,92,58,.03);
+  position:relative;
+}
+.schema::before{
+  content:'FLUX RÉSEAU — Bidule';
+  position:absolute;top:-.55rem;left:1.5rem;
+  background:#050504;padding:0 .6rem;
+  font-size:.5rem;letter-spacing:.35em;color:var(--v);text-transform:uppercase;
+}
+.sn{color:rgba(212,232,217,.7)}
+.sa{color:var(--ol)}
+.sc{color:rgba(240,236,227,.2);font-style:italic}
+.sl{color:rgba(240,236,227,.18)}
+
+.compat{margin-top:2.5rem}
+.compat-row{
+  display:grid;grid-template-columns:1.2fr 1.5fr;
+  padding:.5rem 0;border-bottom:1px solid rgba(240,236,227,.04);gap:1rem;
+}
+.compat-row:last-child{border:none}
+.ck{font-family:var(--fm);font-size:.66rem;color:var(--g)}
+.cv{font-family:var(--fm);font-size:.66rem;color:var(--ol)}
+
+/* ══════════════════════════════════════════
+   BASE DE DONNÉES
+══════════════════════════════════════════ */
+#bdd{
+  background:var(--n3);padding:8rem var(--pad-x);
+  position:relative;overflow:hidden;
+}
+#bdd::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,var(--o) 30%,var(--o) 70%,transparent);
+  opacity:.22;
+}
+.bdd-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:7rem;align-items:center;
+  max-width:1360px;margin:3.5rem auto 0;
+}
+.bdd-screens{
+  position:relative;display:flex;flex-direction:column;gap:1.2rem;
+}
+.bdd-screen{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(240,236,227,.07);
+  transition:border-color .4s;
+  /* pas d'aspect-ratio forcé — proportions naturelles de l'image */
+}
+.bdd-screen:hover{border-color:rgba(184,96,14,.3)}
+.bdd-screen:first-child{
+  border-radius:2px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+.bdd-screen:last-child{
+  box-shadow:0 16px 50px rgba(0,0,0,.4);
+}
+.bdd-screen img{
+  width:100%;
+  height:auto; /* hauteur naturelle = proportions d'origine préservées */
+  display:block;
+  transition:transform .8s cubic-bezier(.16,1,.3,1);
+  filter:brightness(.92) contrast(1.05);
+}
+.bdd-screen:hover img{transform:scale(1.03)}
+.bdd-screen-label{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:.8rem 1rem;
+  background:linear-gradient(to top,rgba(8,8,6,.85),transparent);
+  font-family:var(--fm);font-size:.52rem;letter-spacing:.25em;
+  color:rgba(240,236,227,.45);text-transform:uppercase;
+}
+.bdd-title{
+  font-family:var(--fd);
+  font-size:clamp(2rem,3.8vw,3.5rem);
+  font-weight:700;line-height:1.1;
+  margin:1.5rem 0 2rem;color:var(--b);
+}
+.bdd-title em{font-style:italic;color:var(--o)}
+
+.bdd-cta{
+  display:inline-flex;align-items:center;gap:1rem;
+  margin-top:2.5rem;padding:1.1rem 2.2rem;
+  background:var(--o);color:var(--n);
+  font-family:var(--fm);font-size:.68rem;letter-spacing:.25em;
+  text-decoration:none;text-transform:uppercase;
+  font-weight:400;
+  transition:background .3s,transform .3s;
+  position:relative;overflow:hidden;
+}
+.bdd-cta::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,.12);
+  transform:translateX(-100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.bdd-cta:hover::before{transform:translateX(0)}
+.bdd-cta:hover{transform:translateY(-2px)}
+.bdd-cta-arrow{font-size:.9rem;transition:transform .3s}
+.bdd-cta:hover .bdd-cta-arrow{transform:translate(3px,-3px)}
+
+.bdd-note{
+  display:flex;align-items:flex-start;gap:.8rem;
+  margin-top:1.8rem;padding:1.2rem 1.5rem;
+  border-left:2px solid rgba(184,96,14,.35);
+  background:rgba(184,96,14,.04);
+}
+.bdd-note-text{
+  font-size:.9rem;line-height:1.75;
+  color:rgba(240,236,227,.48);
+}
+.bdd-note-ico{font-size:.85rem;opacity:.5;flex-shrink:0;margin-top:.15rem}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+#footer{
+  background:var(--n);padding:5rem var(--pad-x) 3.5rem;
+  border-top:1px solid rgba(240,236,227,.05);
+}
+.footer-main{
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;
+  align-items:end;margin-bottom:4rem;
+}
+.footer-logo{
+  font-family:var(--fd);
+  font-size:clamp(2.5rem,6vw,6rem);
+  font-weight:900;line-height:.9;color:var(--b);
+}
+.footer-logo .amp{font-size:.55em;opacity:.35;font-weight:300}
+.footer-right{text-align:right}
+.footer-phrase{
+  font-family:var(--fd);font-size:1.35rem;font-style:italic;
+  color:rgba(240,236,227,.35);line-height:1.6;max-width:30ch;margin-left:auto;
+}
+.footer-phrase strong{color:var(--o);font-style:normal}
+.footer-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:2rem;border-top:1px solid rgba(240,236,227,.05);
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-mono{
+  font-family:var(--fm);font-size:.55rem;
+  letter-spacing:.2em;color:rgba(240,236,227,.2);text-transform:uppercase;
+}
+.footer-link{
+  font-family:var(--fm);font-size:.55rem;letter-spacing:.2em;
+  color:var(--o);text-decoration:none;text-transform:uppercase;
+  opacity:.65;transition:opacity .3s;
+}
+.footer-link:hover{opacity:1}
+
+/* ══════════════════════════════════════════
+   KEYFRAMES
+══════════════════════════════════════════ */
+@keyframes fup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:.18}50%{opacity:.85}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLETTE (≤ 980px)
+══════════════════════════════════════════ */
+@media(max-width:980px){
+  /* nav desktop → burger */
+  .nav-links,.nav-cta{display:none}
+  .nav-burger{display:flex}
+  .nav-brand{opacity:1;transform:none} /* toujours visible sur mobile */
+
+  /* hero */
+  .hero-img-strip{display:none}
+  #hero{padding-top:calc(var(--nav-h) + 1.5rem)}
+  .hero-bottom{grid-template-columns:1fr;gap:1.5rem}
+  .hero-scroll{display:none}
+
+  /* sections grids → 1 colonne */
+  #projet{grid-template-columns:1fr;min-height:auto}
+  .projet-img{height:55vw;min-height:280px}
+  .projet-img::after{background:linear-gradient(to top,var(--b) 0%,transparent 40%)}
+  .projet-body{padding:3rem var(--pad-x)}
+
+  .intro-inner{grid-template-columns:1fr;gap:4rem}
+  .intro-photo{aspect-ratio:16/9;max-height:380px}
+
+  .enjeux-head{grid-template-columns:1fr;gap:2rem;margin-bottom:3rem}
+
+  .fonctions-head{grid-template-columns:1fr;gap:2rem;margin-bottom:3.5rem}
+  .fn-grid{grid-template-columns:1fr}
+
+  #metrics{grid-template-columns:1fr;min-height:auto}
+  .metrics-img-col{min-height:55vw;max-height:400px}
+  .metrics-img-col::after{display:none}
+  .metrics-nums-col{
+    grid-template-rows:auto;
+    grid-template-columns:1fr 1fr;
+  }
+  .metric:nth-child(5),.metric:nth-child(6){border-bottom:1px solid rgba(240,236,227,.05)}
+  .metric:nth-child(5){border-bottom-color:rgba(240,236,227,.05)}
+  .metric:nth-child(6){border-bottom:none}
+
+  .arch-grid{grid-template-columns:1fr;gap:4rem}
+
+  .bdd-grid{grid-template-columns:1fr;gap:4rem}
+  .bdd-screen:last-child{margin-left:0}
+
+  .footer-main{grid-template-columns:1fr;gap:2.5rem}
+  .footer-right{text-align:left}
+  .footer-phrase{margin-left:0}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 640px)
+══════════════════════════════════════════ */
+@media(max-width:640px){
+  .enjeux-grid{grid-template-columns:1fr}
+  .enjeu{border-right:none !important}
+  .enjeu:nth-child(n+2){border-top:1px solid rgba(14,14,8,.08)}
+
+  .metrics-nums-col{grid-template-columns:1fr}
+  .metric:nth-child(odd){border-right:none}
+  .metric{border-bottom:1px solid rgba(240,236,227,.05) !important}
+  .metric:last-child{border-bottom:none !important}
+  .metric{padding:2rem var(--pad-x)}
+
+  .fn{padding:2rem 1.5rem}
+
+  .mani-text{font-size:1.1rem}
+
+  .hero-h{font-size:clamp(3.5rem,13vw,5rem)}
+
+  #manifeste,#enjeux,#philo,#fonctions,#arch,#bdd,#footer,#intro{
+    padding-left:var(--pad-x);padding-right:var(--pad-x);
+  }
+
+  .bdd-screen:last-child{margin-left:0}
+
+  .footer-bar{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ MOBILE MENU OVERLAY ══ -->
+<div id="mobile-menu" role="dialog" aria-label="Menu de navigation" aria-hidden="true">
+  <div class="mobile-menu-top">
+    <a class="mobile-menu-brand" href="#hero" onclick="closeMobileMenu()">Bidule <em>·</em> Amazonie(s)</a>
+  </div>
+  <nav>
+    <ul class="mobile-nav-list">
+      <li class="mobile-nav-item">
+        <a href="#projet" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">01</span>
+          <span class="mobile-nav-label">Le <em>projet</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#intro" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">02</span>
+          <span class="mobile-nav-label">L'<em>objet</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#enjeux" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">03</span>
+          <span class="mobile-nav-label">Les <em>enjeux</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#philo" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">04</span>
+          <span class="mobile-nav-label">Ligne de <em>pensée</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#fonctions" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">05</span>
+          <span class="mobile-nav-label">Fonctionnalités</span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#metrics" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">06</span>
+          <span class="mobile-nav-label"><em>Performance</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#arch" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">07</span>
+          <span class="mobile-nav-label"><em>Architecture</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a href="#bdd" onclick="closeMobileMenu()">
+          <span class="mobile-nav-num">08</span>
+          <span class="mobile-nav-label">Base de <em>données</em></span>
+          <span class="mobile-nav-arrow">↗</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div class="mobile-menu-bottom">
+    <p class="mobile-footer">Projet de recherche — ESAA Avignon — 2025 → 2026</p>
+  </div>
+</div>
+
+<!-- ══ NAVIGATION ══ -->
+<nav id="sitenav" aria-label="Navigation principale">
+  <a class="nav-brand" href="#hero">Bidule 1.0 <em> · </em> Amazonie(s)</a>
+  <ul class="nav-links" role="list">
+    <li><a class="nav-item" href="#projet"><span>Le projet</span></a></li>
+    <li><a class="nav-item" href="#intro"><span>L'objet</span></a></li>
+    <li><a class="nav-item" href="#enjeux"><span>Les enjeux</span></a></li>
+    <li><a class="nav-item" href="#philo"><span>Ligne de pensée</span></a></li>
+    <li><a class="nav-item" href="#fonctions"><span>Fonctionnalités</span></a></li>
+    <li><a class="nav-item" href="#metrics"><span>Performance</span></a></li>
+    <li><a class="nav-item" href="#arch"><span>Architecture</span></a></li>
+    <li><a class="nav-item" href="#bdd"><span>Base de données</span></a></li>
+  </ul>
+  <button class="nav-burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══ HERO ══ -->
+<main>
+<section id="hero" aria-label="Introduction">
+  <div class="hero-deco" aria-hidden="true"></div>
+  <div class="hero-rule" aria-hidden="true"></div>
+  <div class="hero-scroll-line" aria-hidden="true"></div>
+
+  <div class="hero-img-strip" aria-hidden="true">
+    <img src="images/bidule1.webp" alt="" width="960" height="1280">
+  </div>
+
+  <div class="hero-top">
+    <p class="hero-eyebrow">Projet de recherche — ESAA Avignon — By Victor Mulé</p>
+    <h1 class="hero-h">
+      Bidule 1.0
+      <span class="sub">Amazonie<em>(s)</em></span>
+    </h1>
+  </div>
+
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      Base de données sauvage, nomade et autonome —
+      un espace conçu pour restituer regard et parole aux peuples autochtones dépossédés de leurs artefacts culturels.
+    </p>
+    <span class="hero-scroll" aria-hidden="true">Défiler ↓</span>
+  </div>
+</section>
+
+<!-- ══ MANIFESTE ══ -->
+<section id="manifeste" aria-label="Manifeste">
+  <div class="mani-deco" aria-hidden="true"></div>
+  <div class="mani-label label reveal">Manifeste — Amazonie(s)</div>
+  <div class="mani-text-wrap">
+    <!-- Texte fantôme = phrase la plus longue → définit la hauteur du conteneur -->
+    <p class="mani-ghost" aria-hidden="true">Écoutez ! Les objets parlent. Ils ont traversé les mers, ont été emmenés, pris, pillés. Ils sont sortis des mains qui les ont créés. Mais leurs voix attendent. Leur souffle attend. Leur esprit attend.</p>
+    <!-- Texte animé par le typewriter -->
+    <p class="mani-text" id="mani-out" aria-live="polite"><span class="cursor-blink" aria-hidden="true"></span></p>
+  </div>
+</section>
+
+<!-- ══ PROJET ESAA ══ -->
+<section id="projet" aria-label="Le projet de recherche">
+  <div class="projet-img">
+    <img src="images/Benki.webp"
+         alt="Benki Piyâko, leader et chamane du peuple Ashaninka, partenaire du projet Amazonie(s)"
+         loading="lazy" width="1200" height="1600">
+  </div>
+  <div class="projet-body">
+    <div class="label projet-label reveal">01 — Le projet de recherche</div>
+    <h2 class="projet-title reveal d1">
+      Amazonie<em>(s)</em><br>— ESAA Avignon
+    </h2>
+    <p class="projet-text reveal d2">
+      Coordonné par Léa Le Bricomte et Camille Benecchi, le projet de recherche <strong>Amazonie(s)</strong> s'adosse à la pédagogie singulière de la conservation-restauration à l'École supérieure d'art d'Avignon.
+    </p>
+    <p class="projet-text reveal d3">
+      Il interroge : que se passe-t-il lorsque des artistes investissent les collections de provenance coloniale ? Que signifie conserver un objet totalement coupé de sa culture, de son milieu, de ses usages d'origine, sans plus de lien avec les communautés qui l'ont créé ?
+    </p>
+    <p class="projet-text reveal d4" style="margin-top:1.3rem">
+      La méthode de travail se fonde sur la rencontre avec des représentant·es de communautés autochtones d'Amazonie brésilienne — peuples Surui, Guarani et Ashaninka — avec lesquels des partenariats ont été noués depuis 2022. Benki Piyâko, leader et chamane du peuple Ashaninka, est l'une de ces figures centrales du projet.
+    </p>
+    <a class="projet-link reveal d4" href="https://esaavignon.eu/amazonies/" target="_blank" rel="noopener">
+      esaavignon.eu/amazonies
+    </a>
+  </div>
+</section>
+
+<!-- ══ INTRO OBJET ══ -->
+<section id="intro" aria-label="L'objet">
+  <div class="intro-inner">
+    <div class="intro-text">
+      <div class="label reveal">02 — L'objet</div>
+      <h2 class="big reveal d1">Une solution<br>de la taille d'un<br><em>poing fermé</em></h2>
+      <p class="body reveal d2">
+        Le Bidule est une borne autonome. Il tient dans la main ou dans un sac à dos. Il fonctionne sans Internet ni infrastructure. Il crée un réseau Wi-Fi local, accessible sur un périmètre restreint.
+      </p>
+      <p class="body reveal d3" style="margin-top:1.3rem">
+        On s'y connecte avec son téléphone ou son ordinateur. Pas de téléchargement d'application, pas besoin de créer un compte, anonymat possible. La base de données propose une liste d'images d'artefacts, dépouillées de toute attribution ou métadonnée, principalement issues des collections du Quai Branly – Jacques Chirac, ainsi que des ateliers de l'ESAA.
+      </p>
+      <p class="body reveal d4" style="margin-top:1.3rem">
+        Elle fonctionne comme un micro-réseau social centré sur les artefacts culturels. Elle ne distingue pas la parole d'un spécialiste de celle d'un profane. La philosophie du projet est simple : un commentaire, même trivial, peut avoir de la valeur.
+      </p>
+    </div>
+
+    <div class="reveal d2">
+      <div class="intro-photo">
+        <img src="images/bidule2.webp"
+             alt="Le Bidule — écran tactile affichant les instructions d'accès Wi-Fi et le QR code"
+             loading="lazy" width="900" height="1200">
+      </div>
+      <p class="intro-photo-cap">
+        Bidule — Accès à la base de données<br>
+        Se connecter au Wi-Fi : <span style="color:var(--o)">Amazonie(s)</span> — Scanner le QR code
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ENJEUX ══ -->
+<section id="enjeux" aria-label="Les enjeux">
+  <div class="enjeux-inner">
+    <div class="enjeux-head">
+      <div>
+        <div class="label enjeux-label reveal">03 — Les enjeux</div>
+        <h2 class="big reveal d1">Vers une restitution<br>de la <em>Documentation</em></h2>
+      </div>
+      <p class="intro-e reveal d2">
+        Des millions d'objets spoliés, issus de peuples colonisés, longtemps empêchés de transmettre leurs savoir-faire. À qui profite aujourd'hui la mémoire de ces objets ? Maintenus dans leurs belles cages de verre. En les faisant parler uniquement dans notre langue, nous en perdons le sens. Pourtant, une mémoire vivante existe encore, capable d'en hériter.
+      </p>
+    </div>
+    <div class="enjeux-grid">
+      <div class="enjeu reveal">
+        <div class="enjeu-n" aria-hidden="true">01</div>
+        <div class="enjeu-t">Justice mémorielle</div>
+        <p class="enjeu-p">Les communautés qui ont créé ces objets n'y ont généralement pas accès — ni physiquement, ni économiquement, ni symboliquement. Le Bidule crée un espace de parole souverain, sans condition d'entrée.</p>
+      </div>
+      <div class="enjeu reveal d1">
+        <div class="enjeu-n" aria-hidden="true">02</div>
+        <div class="enjeu-t">Souveraineté numérique</div>
+        <p class="enjeu-p">Aucune donnée ne quitte la borne. Pas de cloud, pas de serveur distant, pas d'entreprise tierce. La base, les fichiers audio, les images, les localisations — tout reste dans les mains de ceux qui les produisent.</p>
+      </div>
+      <div class="enjeu reveal d2">
+        <div class="enjeu-n" aria-hidden="true">03</div>
+        <div class="enjeu-t">Accessibilité radicale</div>
+        <p class="enjeu-p">Conçu pour les zones sans connexion, les appareils anciens, sans formation préalable. Réseau ouvert, aucun téléchargement, aucun compte. Le portail s'ouvre automatiquement dès la connexion Wi-Fi.</p>
+      </div>
+      <div class="enjeu reveal">
+        <div class="enjeu-n" aria-hidden="true">04</div>
+        <div class="enjeu-t">Transmission d'urgence</div>
+        <p class="enjeu-p">De nombreuses langues sont aujourd'hui menacées de disparition. Les détenteurs de savoirs vieillissent, et avec leur disparition, des pans entiers de mémoire risquent de se perdre. Un enregistrement audio, même bref, peut constituer une ressource précieuse.</p>
+      </div>
+      <div class="enjeu reveal d1">
+        <div class="enjeu-n" aria-hidden="true">05</div>
+        <div class="enjeu-t">Le nomadisme comme geste</div>
+        <p class="enjeu-p">La borne n'a pas de lieu fixe. Elle peut être déployée dans des contextes variés : un musée, une forêt tropicale, un désert, une école. La mémoire ne se limite pas à un espace institutionnel.</p>
+      </div>
+      <div class="enjeu reveal d2">
+        <div class="enjeu-n" aria-hidden="true">06</div>
+        <div class="enjeu-t">Archive vivante</div>
+        <p class="enjeu-p">Les contributions — textes, enregistrements, images, localisations géographiques — constituent une contre-archive, construite par les premiers concernés, dans leurs langues, selon leurs logiques de mémoire propres.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PHILOSOPHIE ══ -->
+<section id="philo" aria-label="Ligne de pensée">
+  <div class="philo-inner">
+    <div class="label philo-label reveal">04 — Ligne de pensée</div>
+    <h2 class="philo-t reveal d1">Technologie<br><em>décoloniale ?</em></h2>
+    <div class="reveal d2">
+      <p class="philo-p">Il y a quelque chose de paradoxal à utiliser le numérique pour rendre justice à des peuples que la modernité occidentale a tenté, sinon d'effacer, du moins d'aliéner.</p>
+      <p class="philo-p">Bidule n'est pas la start-up nation. Il ne vient pas avec un écran géant ni des serveurs en Californie. Il ne produit ni croissance économique ni plein emploi. Le cœur de l'appareil fait la taille d'une carte de crédit. L'entièreté du système tient sur une carte SD. La technologie est réduite à son strict nécessaire, sans superflu.</p>
+      <p class="philo-p">C'est un projet libre et open source, pensé pour une maintenance simple. Chaque partie est démontable et remplaçable à moindre coût. Tout peut être reprogrammé, réadapté selon les besoins.</p>
+      <p class="philo-p">Internet est une infrastructure inégalement distribuée. Les régions amazoniennes les plus reculées, là où vivent les communautés les moins assimilées, sont aussi les moins connectées. Si certaines communautés autochtones se sont approprié des technologies comme le smartphone ou l'ordinateur, en partie comme moyen de lutte et de reconnaissance, elles restent dépendantes des réseaux.</p>
+    </div>
+    <span class="pill reveal d3">Projet free open source · Téléchargement bientôt disponible</span>
+  </div>
+</section>
+
+<!-- ══ BANDE MONTAGE P5.JS ══ -->
+<div class="assembly-strip" role="img" aria-label="Montage du Bidule — vue éclatée isométrique">
+  <canvas id="assembly-canvas"></canvas>
+  <div class="assembly-cap" aria-hidden="true">Raspberry Pi 4B — UPS HAT E — <span>4× Li-Ion 4900 mAh</span> — architecture ouverte</div>
+</div>
+
+<style>
+.assembly-strip {
+  width: 100%;
+  height: clamp(400px, 80vh, 700px);
+  position: relative;
+  background: #f8f6f1;
+}
+#assembly-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.assembly-cap {
+  position: absolute;
+  bottom: 2rem;
+  right: var(--pad-x);
+  font-family: var(--fm);
+  font-size: .55rem;
+  letter-spacing: .2em;
+  color: rgba(8,8,6,.28);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.assembly-cap span { color: var(--o); }
+</style>
+
+<script>
+(function() {
+  const canvas  = document.getElementById('assembly-canvas');
+  const ctx     = canvas.getContext('2d');
+  const strip   = canvas.parentElement;
+
+  const LAYERS = [
+    { src: 'images/montage/element6.png', spread: 300 },
+    { src: 'images/montage/element5.png', spread: 225 },
+    { src: 'images/montage/element4.png', spread: 150 },
+    { src: 'images/montage/element3.png', spread:  90 },
+    { src: 'images/montage/element2.png', spread:  38 },
+    { src: 'images/montage/element1.png', spread:   0 },
+  ];
+
+  let loaded = 0;
+  const imgs = LAYERS.map(l => {
+    const img = new Image();
+    img.src = l.src;
+    img.onload = () => { loaded++; render(); };
+    return img;
+  });
+
+  function resize() {
+    canvas.width  = strip.clientWidth;
+    canvas.height = strip.clientHeight;
+    render();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  /* Progress :
+     - centre de la section == centre du viewport  → p = 1 (assemblé)
+     - section hors écran (haut ou bas)            → p = 0 (éclaté)
+     La transition se fait proportionnellement à la distance au centre. */
+  function getProgress() {
+    const rect    = strip.getBoundingClientRect();
+    const vh      = window.innerHeight;
+    const sCenter = rect.top + rect.height / 2;  // centre de la section
+    const vCenter = vh / 2;                       // centre du viewport
+    const dist    = Math.abs(sCenter - vCenter);
+    /* max distance utile = demi-écran + demi-section */
+    const maxDist = vh / 2 + rect.height / 2;
+    return Math.max(0, 1 - dist / maxDist);
+  }
+
+  /* Smoothstep : transition douce, ni trop rapide ni trop lente */
+  function smoothstep(t) {
+    return t * t * (3 - 2 * t);
+  }
+
+  function render() {
+    if (loaded === 0) return;
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const p     = smoothstep(getProgress());
+    const scale = Math.min(W / 1000, H / 700) * 0.80;
+    const cx    = W * 0.5;
+    const cy    = H * 0.48;
+
+    LAYERS.forEach((l, i) => {
+      const img = imgs[i];
+      if (!img.complete || !img.naturalWidth) return;
+      const yOff = l.spread * (1 - p);
+      const iw   = img.naturalWidth  * scale;
+      const ih   = img.naturalHeight * scale;
+      ctx.drawImage(img, cx - iw/2, cy - ih/2 + yOff, iw, ih);
+    });
+  }
+
+  let rafId = null;
+  window.addEventListener('scroll', () => {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => { rafId = null; render(); });
+  }, { passive: true });
+
+})();
+</script>
+
+<!-- ══ FONCTIONNALITÉS ══ -->
+<section id="fonctions" aria-label="Fonctionnalités">
+  <div class="fonctions-inner">
+    <div class="fonctions-head">
+      <div>
+        <div class="label reveal">05 — Fonctionnalités</div>
+        <h2 class="big reveal d1" style="color:var(--b)">Ce que Bidule<br><em>peut faire</em></h2>
+      </div>
+      <p class="body reveal d2">
+        La base de données est accessible depuis n'importe quel appareil connecté au réseau Wi-Fi local — Android, iOS, Windows — sans connexion Internet, sans téléchargement, sans inscription. Aucune identification n'est requise. L'anonymat est respecté par défaut.
+      </p>
+    </div>
+    <div class="fn-grid">
+      <div class="fn reveal">
+        <span class="fn-ico" aria-hidden="true">🖼</span>
+        <div class="fn-t">Import d'images</div>
+        <p class="fn-p">Le visiteur peut associer à chaque artefact une photographie ou une image issue de son propre appareil. Document de famille, objet similaire conservé au village, comparaison visuelle, preuve iconographique — tout support figuratif est accepté. L'image est compressée localement avant dépôt, sans transfert vers un serveur externe.</p>
+      </div>
+      <div class="fn reveal d1">
+        <span class="fn-ico" aria-hidden="true">✍︎</span>
+        <div class="fn-t">Annotation textuelle</div>
+        <p class="fn-p">Chaque artefact peut recevoir des annotations écrites dans toute langue et tout système graphique. Le champ est libre, sans formulaire structuré ni taxonomie imposée — le visiteur écrit ce qu'il reconnaît, ce qu'il sait, ce qu'il ressent.</p>
+      </div>
+      <div class="fn reveal d1">
+        <span class="fn-ico" aria-hidden="true">🎙</span>
+        <div class="fn-t">Enregistrement vocal</div>
+        <p class="fn-p">Le dispositif permet l'enregistrement audio directement depuis le microphone du téléphone, ou l'import d'un fichier sonore existant. Pour une documentation qui résiste à une hégémonie de l'écriture : chants, récits oraux, nominations dans les langues d'origine.</p>
+      </div>
+      <div class="fn reveal d2">
+        <span class="fn-ico" aria-hidden="true">📍</span>
+        <div class="fn-t">Localisation géographique</div>
+        <p class="fn-p">Une carte interactive de l'Amazonie et du Brésil permet au visiteur de déposer un marqueur indiquant une origine, un territoire, un lieu de mémoire associé à l'artefact. Ces données constituent une cartographie participative construite par les détenteurs du savoir.</p>
+      </div>
+      <div class="fn reveal d2">
+        <span class="fn-ico" aria-hidden="true">⚡</span>
+        <div class="fn-t">Synchronisation en temps réel</div>
+        <p class="fn-p">Les contributions sont diffusées instantanément à l'ensemble des appareils connectés au réseau local, via un protocole SSE (Server-Sent Events). La base de données se constitue collectivement, en direct, à la manière d'un espace de parole partagé.</p>
+      </div>
+      <div class="fn reveal d3">
+        <span class="fn-ico" aria-hidden="true">🔒</span>
+        <div class="fn-t">Souveraineté sur ses données</div>
+        <p class="fn-p">Chaque contributeur conserve la maîtrise de ses apports. Un identifiant personnel, généré localement et stocké sur son propre appareil, lui permet de modifier ou supprimer à tout moment ses annotations, enregistrements et images. Aucune donnée ne transite vers un serveur externe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHIFFRES ══ -->
+<section id="metrics" aria-label="Performance">
+  <div class="metrics-header reveal">
+    <div class="label">06 — Performance</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(2rem,4vw,3.5rem);font-weight:700;line-height:1.05;margin:.6rem 0 0;color:var(--b)">
+      Bidule, <em style="font-style:italic;color:var(--o)">en quelques chiffres</em>
+    </h2>
+  </div>
+  <div class="metrics-img-col reveal">
+    <img src="images/Connexion.png"
+         alt="Le Bidule allumé dans l'obscurité, écran lumineux affichant l'interface d'accès"
+         loading="lazy" width="900" height="1200">
+  </div>
+  <div class="metrics-nums-col">
+    <div class="metric reveal">
+      <div class="metric-val"><span>14</span> Go</div>
+      <div class="metric-label">Taille du projet<br>stockés sur Bidule</div>
+    </div>
+    <div class="metric reveal d1">
+      <div class="metric-val">~<span>15</span>h</div>
+      <div class="metric-label">Autonomie<br>sur batterie</div>
+    </div>
+    <div class="metric reveal d1">
+      <div class="metric-val"><span>5,5</span> M</div>
+      <div class="metric-label">km² de cartographie<br>hors ligne</div>
+    </div>
+    <div class="metric reveal d2">
+      <div class="metric-val"><span>120</span>€</div>
+      <div class="metric-label">Coût matériel<br>du dispositif</div>
+    </div>
+    <div class="metric reveal d2">
+      <div class="metric-val"><span>100</span>+</div>
+      <div class="metric-label">Connexions<br>simultanés</div>
+    </div>
+    <div class="metric reveal d3">
+      <div class="metric-val"><span>100</span> K</div>
+      <div class="metric-label">commentaires, images<br>audios stockables</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ARCHITECTURE ══ -->
+<section id="arch" aria-label="Architecture technique">
+  <div class="arch-inner">
+    <div class="label reveal">07 — Architecture</div>
+    <h2 class="reveal d1" style="font-family:var(--fd);font-size:clamp(2.2rem,4.5vw,4rem);font-weight:700;line-height:1.05;margin:.8rem 0 0;color:var(--b)">
+      Le Bidule, <em style="font-style:italic;color:var(--o)">en détail</em>
+    </h2>
+    <div class="arch-grid">
+      <div>
+        <p class="specs-t" style="margin-bottom:1.5rem">Composants</p>
+        <div class="reveal">
+          <div class="specs-row"><span class="sk">Cerveau</span><span class="sv">Raspberry Pi 4B — 4 Go RAM</span></div>
+          <div class="specs-row"><span class="sk">OS</span><span class="sv">Debian 13 Trixie — aarch64</span></div>
+          <div class="specs-row"><span class="sk">Noyau</span><span class="sv">Linux 6.12 — PREEMPT</span></div>
+          <div class="specs-row"><span class="sk">Wi-Fi</span><span class="sv">SSID: Amazonie(s) — ouvert</span></div>
+          <div class="specs-row"><span class="sk">Portail</span><span class="sv">10.10.0.1 — statique</span></div>
+          <div class="specs-row"><span class="sk">Batterie</span><span class="sv">Waveshare UPS HAT E — 4× Li-Ion</span></div>
+          <div class="specs-row"><span class="sk">Niveau</span><span class="sv">78% — 3 714 mAh restants</span></div>
+          <div class="specs-row"><span class="sk">Stockage</span><span class="sv">microSD 128 Go — 13% utilisé</span></div>
+          <div class="specs-row"><span class="sk">API</span><span class="sv">Node.js v20 + Express 5 + SQLite</span></div>
+          <div class="specs-row"><span class="sk">Cartographie</span><span class="sv">Docker tileserver-gl + MBTiles</span></div>
+          <div class="specs-row"><span class="sk">Firewall</span><span class="sv">nftables — DNAT 80/443 → Pi</span></div>
+          <div class="specs-row"><span class="sk">Température</span><span class="sv">57.4°C — charge normale</span></div>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <div class="schema" role="figure" aria-label="Schéma du flux réseau Bidule">
+<span class="sn">[Téléphone visiteur]</span>
+<span class="sl">   │</span>
+<span class="sa">   ↓  Connexion Wi-Fi "Amazonie(s)" — réseau ouvert</span>
+<span class="sl">   │</span>
+<span class="sn">[hostapd — wlan0 — 10.10.0.1]</span>
+<span class="sl">   │</span>
+<span class="sa">   ↓  DHCP + DNS — tout pointe vers le Pi</span>
+<span class="sl">   │</span>
+<span class="sn">[nftables — NAT PREROUTING]</span>
+<span class="sl">   │</span>
+<span class="sa">   ↓  TCP 80/443 → intercepté et redirigé</span>
+<span class="sl">   │</span>
+<span class="sn">[nginx — portail captif multi-OS]</span>
+<span class="sl">   │</span>
+<span class="sa">   ↓  Application web servie localement</span>
+<span class="sl">   │</span>
+<span class="sn">[Amazonie(s) — http://10.10.0.1/]</span>
+<span class="sc">       ← aucune donnée ne quitte le Pi →</span>
+        </div>
+        <div class="compat">
+          <p class="specs-t" style="margin-bottom:1rem">Compatibilité OS — portail captif</p>
+          <div class="compat-row"><span class="ck">Android</span><span class="cv">HTTP 204 No Content / JSON login_url</span></div>
+          <div class="compat-row"><span class="ck">Apple iOS / macOS</span><span class="cv">HTML &lt;BODY&gt;Success&lt;/BODY&gt;</span></div>
+          <div class="compat-row"><span class="ck">Windows</span><span class="cv">Microsoft Connect Test / NCSI</span></div>
+          <div class="compat-row"><span class="ck">Firefox</span><span class="cv">success.txt / canonical.html</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BASE DE DONNÉES ══ -->
+<section id="bdd" aria-label="Base de données en ligne">
+  <div style="max-width:1360px;margin:0 auto">
+    <div class="label reveal">08 — La base de données</div>
+    <div class="bdd-grid">
+      <div class="bdd-screens reveal">
+        <div class="bdd-screen">
+          <img src="images/screen-galerie.webp"
+               alt="Interface Amazonie(s) — galerie d'artefacts avec panneau de commentaires texte, audio et image"
+               loading="lazy" width="900" height="500">
+          <div class="bdd-screen-label">Interface — galerie + commentaires texte, audio, image</div>
+        </div>
+        <div class="bdd-screen">
+          <img src="images/screen-carte.webp"
+               alt="Interface Amazonie(s) — carte satellite de localisation des origines des artefacts"
+               loading="lazy" width="900" height="500">
+          <div class="bdd-screen-label">Carte satellite — localisation des origines</div>
+        </div>
+      </div>
+
+      <div class="bdd-content">
+        <div class="label reveal">Accès en ligne</div>
+        <h2 class="bdd-title reveal d1">
+          Aperçu de la<br><em>base de données</em>
+        </h2>
+        <p class="body reveal d2">
+          L'application tourne en local sur Bidule, mais une version en ligne est accessible depuis n'importe quel navigateur.
+        </p>
+        <p class="body reveal d3" style="margin-top:1.2rem">
+          Elle permet de se faire une idée concrète du dispositif — de son interface, de ses fonctionnalités — avant tout déploiement terrain.
+        </p>
+        <a class="bdd-cta reveal d3" href="https://amazonies.netlify.app/" target="_blank" rel="noopener">
+          Accéder à la base de données
+          <span class="bdd-cta-arrow" aria-hidden="true">↗</span>
+        </a>
+        <div class="bdd-note reveal d4">
+          <span class="bdd-note-ico" aria-hidden="true">⚠</span>
+          <p class="bdd-note-text">
+            La version en ligne est un miroir de ce qui tourne sur Bidule. En conditions de déploiement terrain, la borne fonctionne entièrement hors-ligne.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer id="footer">
+  <div class="footer-main">
+    <div class="footer-logo">
+      Bidule 1.0<br>
+      <span class="amp">Amazonie<em style="font-style:italic;color:var(--o)">(s)</em></span>
+    </div>
+    <div class="footer-right">
+      <p class="footer-phrase">
+        Un dispositif de recherche<br>et de documentation<br>au service des<br>
+        <strong>communautés autochtones</strong>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span class="footer-mono">Projet de recherche — ESAA Avignon — 2025 → 2026</span>
+    <a class="footer-link" href="https://victor-mule.netlify.app/" target="_blank" rel="noopener">By Victor Mulé ↗</a>
+  </div>
+</footer>
+
+<!-- ══ JS ══ -->
+<script>
+/* ── Manifeste typewriter ── */
+const phrases = [
+  "Écoutez ! Les objets parlent. Ils ont traversé les mers, ont été emmenés, pris, pillés. Ils sont sortis des mains qui les ont créés. Mais leurs voix attendent. Leur souffle attend. Leur esprit attend.",
+  "Racontez ! Chantez ! Écrivez ! Souvenez-vous ! Rendez la vie à ces objets ! Faites-les parler à nouveau ! Chaque mot est un souffle, chaque chant est un vent qui traverse les vitrines.",
+  "Les objets exposés dans les musées ne sont pas seulement des choses à regarder. Ils ont une histoire. Beaucoup ont été arrachés à leurs lieux d'origine, emmenés loin de ceux qui les ont créés.",
+  "Où qu'ils soient — musée, collection, cabinet — leurs voix peuvent résonner. Le silence est terminé. Le manifeste est vivant. Les objets parlent. Écoutez-les.",
+  "Chaque voix compte. Chaque souffle compte. Chaque objet compte. Transformez ces lieux en espaces de rencontre, de dialogue, d'écho. Rejoignez-nous."
+];
+const out = document.getElementById('mani-out');
+let pi = 0, ci = 0, phase = 'type';
+function tick() {
+  const t = phrases[pi];
+  if (phase === 'type') {
+    ci = Math.min(ci + 1, t.length);
+    out.innerHTML = t.slice(0, ci) + '<span class="cursor-blink" aria-hidden="true"></span>';
+    if (ci >= t.length) { phase = 'hold'; setTimeout(tick, 3200); return; }
+    setTimeout(tick, 22);
+  } else if (phase === 'hold') {
+    phase = 'erase'; setTimeout(tick, 60);
+  } else {
+    ci = Math.max(ci - 3, 0);
+    out.innerHTML = t.slice(0, ci) + '<span class="cursor-blink" aria-hidden="true"></span>';
+    if (ci <= 0) { pi = (pi + 1) % phrases.length; phase = 'type'; setTimeout(tick, 500); return; }
+    setTimeout(tick, 12);
+  }
+}
+setTimeout(tick, 1200);
+
+/* ── Reveal au scroll ── */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); revObs.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+/* ── Parallax hero (réduit pour éviter les saccades) ── */
+const heroStrip = document.querySelector('.hero-img-strip img');
+if (heroStrip && window.matchMedia('(min-width:981px)').matches) {
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        heroStrip.style.transform = `translateY(${window.scrollY * 0.15}px)`;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+/* ── Navigation — scrolled state & active section ── */
+(function(){
+  const nav   = document.getElementById('sitenav');
+  const ids   = ['projet','intro','enjeux','philo','fonctions','metrics','arch','bdd'];  const secs  = ids.map(id => document.getElementById(id)).filter(Boolean);
+  const items = document.querySelectorAll('.nav-item');
+
+  function update(){
+    const scrolled = window.scrollY > 80;
+    nav.classList.toggle('scrolled', scrolled);
+
+    const mid = window.innerHeight * .4;
+    let active = 0;
+    secs.forEach((s,i)=>{ if(s.getBoundingClientRect().top <= mid) active = i; });
+    items.forEach((el,i)=> el.classList.toggle('active', i === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+
+/* ── Menu mobile ── */
+const burger = document.getElementById('nav-burger');
+const mobileMenu = document.getElementById('mobile-menu');
+let menuOpen = false;
+
+function openMobileMenu(){
+  menuOpen = true;
+  burger.classList.add('open');
+  burger.setAttribute('aria-expanded','true');
+  mobileMenu.classList.add('open');
+  mobileMenu.setAttribute('aria-hidden','false');
+  mobileMenu.style.pointerEvents = 'all';
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu(){
+  menuOpen = false;
+  burger.classList.remove('open');
+  burger.setAttribute('aria-expanded','false');
+  mobileMenu.classList.remove('open');
+  mobileMenu.setAttribute('aria-hidden','true');
+  mobileMenu.style.pointerEvents = 'none';
+  document.body.style.overflow = '';
+}
+burger.addEventListener('click', () => menuOpen ? closeMobileMenu() : openMobileMenu());
+
+// Fermer avec Escape
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && menuOpen) closeMobileMenu(); });
+</script>
+</body>
+</html>
